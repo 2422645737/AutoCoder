@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.shiyue</groupId>
-	<artifactId>CodeParse</artifactId>
+	<artifactId>codeparse</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>CodeParse</name>
-	<description>CodeParse</description>
+	<name>codeparse</name>
+	<description>codeparse</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -34,11 +34,19 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>com.example</groupId>
+			<artifactId>common</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 	</dependencies>
 
