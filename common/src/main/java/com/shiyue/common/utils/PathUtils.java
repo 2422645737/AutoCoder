@@ -1,0 +1,48 @@
+package com.shiyue.common.utils;
+
+import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+import java.lang.reflect.Method;
+import java.util.Map;
+
+/**
+ * 路径URL工具类
+ * @author 24226
+ * @date 2025/02/11
+ */
+@Component
+public class PathUtils {
+
+    @Resource
+    private  RequestMappingHandlerMapping requestMappingHandlerMapping;
+
+
+    /**
+     * 通过url获取对应的Method，用于后续解析源码
+     * @param pathUrl
+     * @return {@link Method }
+     */
+    public Method getMethod(String pathUrl){
+        Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
+        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
+            RequestMappingInfo key = entry.getKey();
+            HandlerMethod value = entry.getValue();
+            for (String pattern : key.getPatternValues()) {
+                if (pattern.equals(pathUrl)) {
+                    Method method = value.getMethod();
+                    System.out.println("Found method: " + method.getDeclaringClass().getName() + "." + method.getName());
+                    return method;
+                }
+            }
+        }
+        return null;
+    }
+
+}

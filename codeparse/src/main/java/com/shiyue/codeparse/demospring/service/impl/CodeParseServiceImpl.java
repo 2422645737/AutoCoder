@@ -2,15 +2,11 @@ package com.shiyue.codeparse.demospring.service.impl;
 
 import com.shiyue.codeparse.demospring.entity.Param;
 import com.shiyue.codeparse.demospring.service.CodeParseService;
+import com.shiyue.codeparse.parse.JavaMethodParser;
 import jakarta.annotation.Resource;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @description:
@@ -25,7 +21,8 @@ import java.util.Set;
 public class CodeParseServiceImpl implements CodeParseService {
 
     @Resource
-    private RequestMappingHandlerMapping requestMappingHandlerMapping;
+    JavaMethodParser javaMethodParser;
+
     @Override
     public String parse(String code) {
         //将code拆分为字符串数组
@@ -53,19 +50,9 @@ public class CodeParseServiceImpl implements CodeParseService {
 
     @Override
     public String getSourceCode(Param param) {
-        Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
-            RequestMappingInfo key = entry.getKey();
-            HandlerMethod value = entry.getValue();
-            for (String pattern : key.getPatternValues()) {
-                if (pattern.equals(param.getPath())) {
-                    Method method = value.getMethod();
-                    System.out.println("Found method: " + method.getDeclaringClass().getName() + "." + method.getName());
-                }
-            }
-
-
-
+        try{
+            javaMethodParser.getSourceCode(param.getPath());
+        }catch (Exception e){
         }
         return null;
     }
