@@ -33,6 +33,13 @@ public class ClassUtils {
         packagePath = FileConst.SRC_PATH + packagePath;
         File srcPath = FileUtils.getProjectRoot(new File(packagePath));
         String repositoryPath = srcPath.getAbsoluteFile().getParentFile().getName();
+        //通过class路径获取项目根文件名称
+        String file = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+        File classFile = new File(file);
+        if (classFile.exists()) {
+            //jar包
+            repositoryPath = classFile.getParentFile().getParentFile().getName();
+        }
         return repositoryPath + "/" + packagePath;
     }
 

@@ -51,8 +51,11 @@ public class CodeParseServiceImpl implements CodeParseService {
     @Override
     public String getSourceCode(Param param) {
         try{
-            javaMethodParser.getSourceCode(param.getPath());
+            String sourceCode = "这是Service层的代码，作为示例";
+            //javaMethodParser.getSourceCode(param.getPath());
+            return sourceCode;
         }catch (Exception e){
+
         }
         return null;
     }
