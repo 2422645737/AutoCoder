@@ -2,6 +2,8 @@ package com.shiyue.codeparse.demospring.controller;
 
 import com.shiyue.codeparse.demospring.entity.Param;
 import com.shiyue.codeparse.demospring.service.CodeParseService;
+import com.shiyue.codeparse.parse.entity.MethodCallTree;
+import com.shiyue.codeparse.parse.filter.MethodCallTypeFilter;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.annotation.Resource;
@@ -11,6 +13,9 @@ import spoon.reflect.code.CtInvocation;
 import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtTypeReference;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @description:
@@ -34,7 +39,7 @@ public class CodeParseController {
 
 
     @PostMapping("/getSourceCode")
-    public String getSourceCode(@RequestBody Param param) {
+    public MethodCallTree getSourceCode(@RequestBody Param param) {
         //这是一段注释
         System.out.println("getSourceCode");
         //写一段快速排序的代码
@@ -56,6 +61,7 @@ public class CodeParseController {
             }
         }
         //return codeParseService.getSourceCode(param);
+        MethodCallTree methodCallTree = new MethodCallTree();
         Launcher launcher = new Launcher();
         launcher.addInputResource("codeparse/src/main/java");
         launcher.buildModel();
@@ -75,30 +81,55 @@ public class CodeParseController {
                     if (method.getSimpleName().equals(targetMethodName)) {
                         System.out.println("Method Found: " + method.getSignature());
                         System.out.println("Source Code:\n" + method);
-
-                        // 4️⃣ 过滤 Java 标准库方法，找到业务代码方法调用
+                        methodCallTree.setMethodDesc(method.getSignature());
+                        methodCallTree.setSoureceCode(method.getBody().toString());
+                        methodCallTree.setMethodName(method.getSimpleName());
+                        methodCallTree.setCalls(new ArrayList<>());
+                        // 过滤 Java 标准库方法，找到业务代码方法调用
                         method.getElements(e -> e instanceof CtInvocation).forEach(invocation -> {
                             CtInvocation<?> methodCall = (CtInvocation<?>) invocation;
                             CtExecutableReference<?> calledMethod = methodCall.getExecutable();
                             CtTypeReference<?> declaringType = calledMethod.getDeclaringType();
 
-                            // 过滤掉Java标准库函数
-                            if (declaringType != null && !declaringType.getQualifiedName().startsWith("java.")) {
-                                //System.out.println("📌 业务方法调用: " + methodCall);
+                            // 过滤掉Java标准库函数以及无关的业务调用，这里将来需要写一个过滤器，仅仅保留业务级别的方法调用
+                            if (declaringType != null && declaringType.getQualifiedName().startsWith("com.shiyue")) {
+                                //System.out.println("业务方法调用: " + methodCall);
 
-                                // 5️⃣ 查找 `codeParseService` 的 `getSourceCode` 方法实现
                                 CtType<?> serviceClass = model.getAllTypes().stream()
                                         .filter(t -> t.getQualifiedName().equals(declaringType.getQualifiedName()))
                                         .findFirst()
                                         .orElse(null);
 
                                 if (serviceClass != null) {
-                                    for (CtMethod<?> serviceMethod : serviceClass.getMethods()) {
-                                        if (serviceMethod.getSimpleName().equals(calledMethod.getSimpleName())) {
-                                            System.out.println("✅ 找到 `codeParseService.getSourceCode()` 方法的实现:");
-                                            System.out.println(serviceMethod);
+                                    if(serviceClass instanceof CtInterface<?>){
+                                        System.out.println("发现接口调用，开始查找其实现类");
+                                        // 遍历所有类，找到实现这个接口的类
+                                        List<? extends CtClass<?>> implClasses = model.getAllTypes().stream()
+                                                .filter(t -> t instanceof CtClass<?>)
+                                                .map(t -> (CtClass<?>) t)
+                                                .filter(cls -> cls.getSuperInterfaces().stream()
+                                                        .anyMatch(iface -> iface.getQualifiedName().equals(serviceClass.getQualifiedName())))
+                                                .toList();
+                                        // **在实现类中查找方法**
+                                        for (CtClass<?> implClass : implClasses) {
+                                            System.out.println("找到接口的实现类：" + implClass.getQualifiedName());
+                                            for (CtMethod<?> implMethod : implClass.getMethods()) {
+                                                if (implMethod.getSimpleName().equals(calledMethod.getSimpleName())) {
+                                                    System.out.println("接口实现方法：" + implMethod);
+                                                    MethodCallTree methodCallTree1 = new MethodCallTree(implMethod,1);
+                                                    methodCallTree.getCalls().add(methodCallTree1);
+                                                }
+                                            }
+                                        }
+                                    }else{
+                                        for (CtMethod<?> serviceMethod : serviceClass.getMethods()) {
+                                            if (serviceMethod.getSimpleName().equals(calledMethod.getSimpleName())) {
+                                                methodCallTree.getCalls().add(new MethodCallTree(serviceMethod,1));
+                                                System.out.println(serviceMethod);
+                                            }
                                         }
                                     }
+
                                 }
                             }
                         });
@@ -108,7 +139,8 @@ public class CodeParseController {
             }
         }
         getOldCode(param.getPath());
-        return codeParseService.getSourceCode(param);
+        String sourceCode = codeParseService.getSourceCode(param);
+        return methodCallTree;
     }
 
     /**

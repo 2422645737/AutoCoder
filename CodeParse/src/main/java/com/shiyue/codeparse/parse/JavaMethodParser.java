@@ -86,7 +86,19 @@ public class JavaMethodParser {
                         // 如果方法没找到，直接打印调用语句
                         result.append(indent).append("    ").append(statement).append("\n");
                     }
-                } else {
+                }else if(statement.isReturnStmt() && statement.asReturnStmt().getExpression().isPresent()){
+                    // 发现 return 语句中的方法调用
+                    MethodCallExpr returnMethodCall = statement.asReturnStmt().getExpression().get().asMethodCallExpr();
+                    String returnMethodName = returnMethodCall.getNameAsString();
+                    if (methodMap.containsKey(returnMethodName)) {
+                        // 递归展开返回值的方法
+                        result.append(inlineMethod(methodMap.get(returnMethodName), indent + "    ", methodMap));
+                    } else {
+                        // 方法未找到，直接打印 return 语句
+                        result.append(indent).append("    ").append(statement).append("\n");
+                    }
+                }
+                else {
                     // 直接打印普通语句
                     result.append(indent).append("    ").append(statement).append("\n");
                 }
