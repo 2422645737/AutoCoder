@@ -1,6 +1,9 @@
 package com.shiyue.codeparse.demospring.service;
 
 import com.shiyue.codeparse.demospring.entity.Param;
+import com.shiyue.codeparse.parse.entity.MethodCallTree;
+
+import java.io.FileNotFoundException;
 
 public interface CodeParseService {
     /**
@@ -8,13 +11,12 @@ public interface CodeParseService {
      * @param code
      * @return
      */
-    public String parse(String code);
+     String parse(String code);
 
 
     /**
-     * 获取源代码
      * @param param
      * @return
      */
-    public String getSourceCode(Param param);
+     MethodCallTree getSourceCode(Param param) throws FileNotFoundException;
 }

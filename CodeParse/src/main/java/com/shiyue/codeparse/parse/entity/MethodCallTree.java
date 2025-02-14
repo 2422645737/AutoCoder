@@ -1,8 +1,11 @@
 package com.shiyue.codeparse.parse.entity;
 
+import lombok.Builder;
 import lombok.Data;
+import spoon.reflect.code.CtComment;
 import spoon.reflect.declaration.CtMethod;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -16,27 +19,7 @@ import java.util.List;
 @Data
 public class MethodCallTree {
 
-    /**
-     *
-     */
 
-    public MethodCallTree(){
-
-    }
-
-    /**
-     * 通过CtMethod初始化参数
-     * @param method
-     */
-
-    public MethodCallTree(CtMethod<?> method, int level){
-        this.level = level;
-        this.methodName = method.getSimpleName();
-        this.methodDesc = method.getSignature();
-        this.methodLocation = method.getPosition().getFile().getAbsolutePath();
-        this.soureceCode = method.getBody().toString();
-        this.recursive = false;
-    }
     /**
      * 方法名
      */
@@ -47,8 +30,14 @@ public class MethodCallTree {
      */
     private String methodDesc;
 
+
     /**
      * 方法位置
+     */
+    private String methodFullPath;
+
+    /**
+     * 方法位置(绝对路径)
      */
     private String methodLocation;
 
@@ -63,6 +52,11 @@ public class MethodCallTree {
     private int level;
 
     /**
+     * 调用顺序
+     */
+    private int order;
+
+    /**
      * 调用方法
      */
     private List<MethodCallTree> calls;
@@ -71,4 +65,38 @@ public class MethodCallTree {
      * 是否递归调用
      */
     private boolean recursive = false;
+
+
+    public MethodCallTree(){
+
+    }
+
+    /**
+     * 通过CtMethod初始化参数
+     * @param method
+     */
+
+    public MethodCallTree(CtMethod<?> method, int level){
+        this.level = level;
+        this.methodName = method.getSimpleName();
+        this.methodDesc = method.getComments().stream().filter(c -> c.getCommentType() == CtComment.CommentType.JAVADOC).map(CtComment::getContent).findFirst().orElse("该接口暂无注释");
+        this.methodLocation = method.getPosition().getFile().getAbsolutePath();
+        this.soureceCode = method.getBody().toString();
+        this.methodFullPath = method.getDeclaringType().getQualifiedName() + "#" + method.getSimpleName();
+        this.recursive = false;
+    }
+
+    /**
+     * 通过CtMethod初始化参数
+     * @param method
+     */
+
+    public static void of(CtMethod<?> method, MethodCallTree methodCallTree){
+        methodCallTree.methodName = method.getSimpleName();
+        methodCallTree.methodDesc = method.getComments().stream().filter(c -> c.getCommentType() == CtComment.CommentType.JAVADOC).map(CtComment::getContent).findFirst().orElse("该接口暂无注释");
+        methodCallTree.methodLocation = method.getPosition().getFile().getAbsolutePath();
+        methodCallTree.soureceCode = method.getBody().toString();
+        methodCallTree.methodFullPath = method.getDeclaringType().getQualifiedName() + "#" + method.getSimpleName();
+        methodCallTree.recursive = false;
+    }
 }

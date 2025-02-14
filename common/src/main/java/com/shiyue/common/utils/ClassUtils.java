@@ -42,5 +42,19 @@ public class ClassUtils {
         }
         return repositoryPath + "/" + packagePath;
     }
-
+    /**
+     * 获取项目相对路径
+     * @param clazz
+     * @return {@link String }
+     */
+    public static String getRepositoryRootName(Class<?> clazz) {
+        String repositoryPath = "";
+        String file = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+        File classFile = new File(file);
+        if (classFile.exists()) {
+            //jar包
+            repositoryPath = classFile.getParentFile().getParentFile().getName();
+        }
+        return repositoryPath;
+    }
 }
