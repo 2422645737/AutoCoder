@@ -9,6 +9,7 @@ import com.shiyue.common.constants.FileConst;
 import com.shiyue.common.utils.ClassUtils;
 import com.shiyue.common.utils.PathUtils;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;

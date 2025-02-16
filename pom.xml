@@ -11,5 +11,6 @@
     <modules>
         <module>common</module>
         <module>codeparse</module>
+        <module>database</module>
     </modules>
 </project>

@@ -1,7 +1,10 @@
 package com.shiyue.codeparse.parse.entity;
 
+import com.shiyue.common.utils.SpringContextUtils;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import spoon.reflect.code.CtComment;
 import spoon.reflect.declaration.CtMethod;
 
@@ -18,8 +21,6 @@ import java.util.List;
  */
 @Data
 public class MethodCallTree {
-
-
     /**
      * 方法名
      */
@@ -42,9 +43,14 @@ public class MethodCallTree {
     private String methodLocation;
 
     /**
+     * 服务名
+     */
+    private String serviceName;
+
+    /**
      * 源代码
      */
-    private String soureceCode;
+    private String sourceCode;
 
     /**
      * 调用层级    最低级为0，表示根方法
@@ -81,9 +87,10 @@ public class MethodCallTree {
         this.methodName = method.getSimpleName();
         this.methodDesc = method.getComments().stream().filter(c -> c.getCommentType() == CtComment.CommentType.JAVADOC).map(CtComment::getContent).findFirst().orElse("该接口暂无注释");
         this.methodLocation = method.getPosition().getFile().getAbsolutePath();
-        this.soureceCode = method.getBody().toString();
+        this.sourceCode = method.getBody().toString();
         this.methodFullPath = method.getDeclaringType().getQualifiedName() + "#" + method.getSimpleName();
         this.recursive = false;
+        this.serviceName = SpringContextUtils.getProperty("spring.application.name");
     }
 
     /**
@@ -95,8 +102,9 @@ public class MethodCallTree {
         methodCallTree.methodName = method.getSimpleName();
         methodCallTree.methodDesc = method.getComments().stream().filter(c -> c.getCommentType() == CtComment.CommentType.JAVADOC).map(CtComment::getContent).findFirst().orElse("该接口暂无注释");
         methodCallTree.methodLocation = method.getPosition().getFile().getAbsolutePath();
-        methodCallTree.soureceCode = method.getBody().toString();
+        methodCallTree.sourceCode = method.getBody().toString();
         methodCallTree.methodFullPath = method.getDeclaringType().getQualifiedName() + "#" + method.getSimpleName();
         methodCallTree.recursive = false;
+        methodCallTree.serviceName = SpringContextUtils.getProperty("spring.application.name");
     }
 }

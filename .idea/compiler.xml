@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="database" />
         <module name="common" />
         <module name="codeparse" />
         <module name="CodeParse" />
@@ -20,6 +21,7 @@
       <module name="CodeParse" options="-parameters" />
       <module name="codeparse" options="-parameters" />
       <module name="common" options="-parameters" />
+      <module name="database" options="-parameters" />
     </option>
   </component>
 </project>
