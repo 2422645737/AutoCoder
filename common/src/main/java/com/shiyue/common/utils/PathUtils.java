@@ -45,4 +45,22 @@ public class PathUtils {
         return null;
     }
 
+    public static String join(String... paths){
+        StringBuilder sb = new StringBuilder();
+        if (paths != null && paths.length > 0){
+            for (String path : paths) {
+                if (path != null && !path.isEmpty()){
+                    int len = path.length();
+                    if(path.charAt(len - 1) == '/'){
+                        path = path.substring(0,len - 1);
+                    }
+                    if(path.charAt(0) != '/'){
+                        path = "/" + path;
+                    }
+                    sb.append(path);
+                }
+            }
+        }
+        return sb.toString();
+    }
 }

@@ -9,6 +9,7 @@ import spoon.reflect.code.CtComment;
 import spoon.reflect.declaration.CtMethod;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -72,7 +73,10 @@ public class MethodCallTree {
      */
     private boolean recursive = false;
 
-
+    /**
+     * 业务中使用Feign调用时，此时方法不能继续向下延申，需要终止，并且到对应的服务中获取源码
+     */
+    private FeignRequestInfo feignRequestInfo;
     public MethodCallTree(){
 
     }
@@ -87,7 +91,12 @@ public class MethodCallTree {
         this.methodName = method.getSimpleName();
         this.methodDesc = method.getComments().stream().filter(c -> c.getCommentType() == CtComment.CommentType.JAVADOC).map(CtComment::getContent).findFirst().orElse("该接口暂无注释");
         this.methodLocation = method.getPosition().getFile().getAbsolutePath();
-        this.sourceCode = method.getBody().toString();
+        if(method.getBody() == null){
+            this.sourceCode = "该方法暂无方法实现";
+        }else{
+            this.sourceCode = method.getBody().toString();
+        }
+        this.calls = new ArrayList<>();
         this.methodFullPath = method.getDeclaringType().getQualifiedName() + "#" + method.getSimpleName();
         this.recursive = false;
         this.serviceName = SpringContextUtils.getProperty("spring.application.name");
@@ -102,9 +111,20 @@ public class MethodCallTree {
         methodCallTree.methodName = method.getSimpleName();
         methodCallTree.methodDesc = method.getComments().stream().filter(c -> c.getCommentType() == CtComment.CommentType.JAVADOC).map(CtComment::getContent).findFirst().orElse("该接口暂无注释");
         methodCallTree.methodLocation = method.getPosition().getFile().getAbsolutePath();
-        methodCallTree.sourceCode = method.getBody().toString();
+        if(method.getBody() == null){
+            methodCallTree.sourceCode = "该方法暂无方法实现";
+        }else{
+            methodCallTree.sourceCode = method.getBody().toString();
+        }
+        methodCallTree.calls = new ArrayList<>();
         methodCallTree.methodFullPath = method.getDeclaringType().getQualifiedName() + "#" + method.getSimpleName();
         methodCallTree.recursive = false;
         methodCallTree.serviceName = SpringContextUtils.getProperty("spring.application.name");
+    }
+    public void addCall(MethodCallTree methodCallTree){
+        if(this.calls == null){
+            this.calls = new ArrayList<>();
+        }
+        this.calls.add(methodCallTree);
     }
 }

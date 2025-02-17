@@ -2,23 +2,11 @@ package com.shiyue.codeparse.demospring.controller;
 
 import com.shiyue.codeparse.demospring.entity.Param;
 import com.shiyue.codeparse.demospring.service.CodeParseService;
-import com.shiyue.codeparse.parse.JavaMethodParser;
-import com.shiyue.codeparse.parse.builder.SpoonModelManage;
 import com.shiyue.codeparse.parse.entity.MethodCallTree;
-import com.shiyue.codeparse.parse.filter.MethodCallTypeFilter;
+import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.annotation.Resource;
-import spoon.Launcher;
-import spoon.reflect.CtModel;
-import spoon.reflect.code.CtInvocation;
-import spoon.reflect.declaration.*;
-import spoon.reflect.reference.CtExecutableReference;
-import spoon.reflect.reference.CtTypeReference;
-
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @description:
