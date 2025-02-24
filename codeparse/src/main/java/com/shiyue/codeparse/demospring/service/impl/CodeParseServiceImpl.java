@@ -168,7 +168,6 @@ public class CodeParseServiceImpl implements CodeParseService {
                                                     MethodCallTree children = recursiveSpread(model, implMethod.getDeclaringType().getQualifiedName(), implMethod.getSimpleName());
                                                     methodCallTree1.setCalls(children.getCalls());
                                                     methodCallTree.addCall(methodCallTree1);
-
                                                 }
                                             }
                                         }

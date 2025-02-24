@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="database" />
+        <module name="git-syncer" />
         <module name="common" />
         <module name="codeparse" />
         <module name="CodeParse" />

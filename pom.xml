@@ -12,5 +12,6 @@
         <module>common</module>
         <module>codeparse</module>
         <module>database</module>
+        <module>git-syncer</module>
     </modules>
 </project>
