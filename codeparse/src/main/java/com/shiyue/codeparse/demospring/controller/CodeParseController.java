@@ -2,11 +2,17 @@ package com.shiyue.codeparse.demospring.controller;
 
 import com.shiyue.codeparse.demospring.entity.Param;
 import com.shiyue.codeparse.demospring.service.CodeParseService;
+import com.shiyue.codeparse.parse.entity.MapperStructure;
 import com.shiyue.codeparse.parse.entity.MethodCallTree;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * @description:
@@ -24,9 +30,9 @@ public class CodeParseController {
     @Resource
     CodeParseService codeParseService;
 
-    @PostMapping("/parse")
-    public String parse(@RequestBody String code) {
-        return codeParseService.parse(code);
+    @PostMapping("/testXML")
+    public List<MapperStructure> testXML() throws Exception{
+        return codeParseService.testXML();
     }
 
 
@@ -37,10 +43,6 @@ public class CodeParseController {
 
     @PostMapping("/getSourceCode")
     public MethodCallTree getSourceCode(@RequestBody Param param) throws FileNotFoundException {
-        getOldCode1(param.getPath());
-        getOldCode2(param.getPath());
-        getOldCode3(param.getPath());
-        getOldCode0(param.getPath());
         return codeParseService.getSourceCode(param);
     }
 
@@ -52,82 +54,7 @@ public class CodeParseController {
 
     @PostMapping("/getSourceCode1")
     public String getSourceCode1(@RequestBody Param param) throws FileNotFoundException {
-        getOldCode1(param.getPath());
-        getOldCode2(param.getPath());
-        getOldCode3(param.getPath());
-        getOldCode0(param.getPath());
         return codeParseService.parse(param.getPath());
     }
-    private String getOldCode1(String code) {
-        //生成一段随机字符串
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            sb.append((char) (Math.random() * 26 + 'a'));
-        }
-        getOldCode2(code);
-        return sb.toString();
-    }
 
-    /**
-     * 获取旧代码
-     * @param code
-     * @return {@link String }
-     */
-
-    private String getOldCode0(String code) {
-        //生成一段随机字符串
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            sb.append((char) (Math.random() * 26 + 'a'));
-        }
-        return sb.toString();
-    }
-
-    /**
-     * 获取旧代码
-     * @param code
-     * @return {@link String }
-     */
-
-    private String getOldCode2(String code) {
-        //生成一段随机字符串
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            sb.append((char) (Math.random() * 26 + 'a'));
-        }
-        getOldCode0(code);
-        return sb.toString();
-    }
-
-    /**
-     * 获取旧代码
-     * @param code
-     * @return {@link String }
-     */
-
-    private String getOldCode3(String code) {
-        //生成一段随机字符串
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            sb.append((char) (Math.random() * 26 + 'a'));
-        }
-        getOldCode1(code);
-        return sb.toString();
-
-    }
-
-    /**
-     * 获取旧代码
-     * @param code
-     * @return {@link String }
-     */
-
-    private String getOldCode(String code) {
-        //生成一段随机字符串
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            sb.append((char) (Math.random() * 26 + 'a'));
-        }
-        return sb.toString();
-    }
 }

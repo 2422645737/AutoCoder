@@ -11,7 +11,7 @@ import lombok.Data;
  * @copyright:
  */
 @Data
-public class FeignRequestInfo {
+public class FeignRequestMethod extends BaseMethod{
     private String feignPath;
     private String feignMethod;
     private String feignMethodDesc;

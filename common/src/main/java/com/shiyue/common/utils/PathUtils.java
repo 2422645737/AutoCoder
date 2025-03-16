@@ -63,4 +63,20 @@ public class PathUtils {
         }
         return sb.toString();
     }
+
+    /**
+     * 移除路径最前方的'/'
+     * @param path
+     * @return {@link String }
+     */
+
+    public static String removeFirstSlash(String path){
+        if (path != null && !path.isEmpty()){
+            int len = path.length();
+            if(path.charAt(0) == '/'){
+                path = path.substring(1,len);
+            }
+        }
+        return path;
+    }
 }
